@@ -12,9 +12,13 @@ def call(body) {
         node(label) {
             container('jnlp') {
                 stage('Checkout code') {
-                    sh "echo hello world"
+                    def p = toAlphanumeric(text: "a_B-c.1")
+                    sh "echo hello world $p"
                 }
             }
         }
     }
 }
+
+
+
