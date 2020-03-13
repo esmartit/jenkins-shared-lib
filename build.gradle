@@ -1,0 +1,40 @@
+plugins {
+    id 'groovy'
+    id 'java'
+}
+
+group 'com.esmartit.devops.jenkins'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+    testCompile "com.lesfurets:jenkins-pipeline-unit:1.1"
+    testCompile "junit:junit:4.12"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = []
+        }
+        groovy {
+            // all code files will be in either of the folders
+            srcDirs += ['src','vars']
+        }
+    }
+    test {
+        java {
+            srcDirs = []
+        }
+        groovy {
+            srcDirs += ['test']
+        }
+    }
+}
+
