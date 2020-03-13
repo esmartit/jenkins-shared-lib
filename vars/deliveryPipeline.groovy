@@ -8,8 +8,7 @@ def call(body) {
     withCredentials([usernamePassword(
             credentialsId: 'github',
             usernameVariable: 'username', passwordVariable: 'gitToken')]) {
-        env.GITHUB_TOKEN = gitToken
-    }
+
     withCredentials([usernamePassword(
             credentialsId: 'docker-credentials',
             usernameVariable: 'dockerUser', passwordVariable: 'dockerPass')]) {
@@ -22,7 +21,7 @@ def call(body) {
             containers: [
                     containerTemplate(name: 'semantic-release', image: 'esmartit/semantic-release:1.0.3', ttyEnabled: true, command: 'cat',
                             envVars: [
-                                    envVar(key: 'GITHUB_TOKEN', value: env.GITHUB_TOKEN),
+                                    envVar(key: 'GITHUB_TOKEN', value: gitToken),
                                     envVar(key: 'DOCKER_HOST', value: 'tcp://dind.devops:2375')])
             ]
     ) {
@@ -79,6 +78,8 @@ def call(body) {
                 notifySlack(currentBuild.result)
             }
         }
+    }
+
     }
 }
 
