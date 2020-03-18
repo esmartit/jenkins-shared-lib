@@ -36,7 +36,7 @@ def call(body) {
                 try {
 
                     notifySlack()
-                    container('jnlp') {
+                    container('semantic-release') {
                         stage('Checkout code') {
                             checkout scm
                         }
