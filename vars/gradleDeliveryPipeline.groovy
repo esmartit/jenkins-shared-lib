@@ -6,7 +6,7 @@ def call(body) {
     body()
 
     withCredentials([usernamePassword(
-            credentialsId: 'github',
+            credentialsId: 'esmartit-github',
             usernameVariable: 'username', passwordVariable: 'gitToken')]) {
 
         def gitUrl = body.delegate.gitRepoUrl
