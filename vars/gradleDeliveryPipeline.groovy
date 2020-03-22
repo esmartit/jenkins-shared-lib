@@ -72,7 +72,7 @@ def call(body) {
                                 if (exists) {
                                     def version = readFile('version.txt').toString().replaceAll("[\\n\\t ]", "")
                                     sh "rm version.txt"
-                                    git branch: 'gh-pages', credentialsId: 'github', url: repoUrl
+                                    sh "git checkout --track origin/gh-pages"
                                     sh "git config --global user.email 'tech@esmartit.es'"
                                     sh "git config --global user.name 'esmartit'"
                                     def versionedArtifactName = "$artifactName-${version}.tgz"
