@@ -72,7 +72,7 @@ def call(body) {
                                 if (exists) {
                                     def version = readFile('version.txt').toString().replaceAll("[\\n\\t ]", "")
                                     sh "rm version.txt"
-                                    sh "git fetch --all"
+                                    sh "git fetch --no-tags --force --progress -- https://$gitUrl +refs/heads/gh-pages:refs/remotes/origin/gh-pages"
                                     sh "git checkout -b gh-pages origin/gh-pages"
                                     sh "git config --global user.email 'tech@esmartit.es'"
                                     sh "git config --global user.name 'esmartit'"
