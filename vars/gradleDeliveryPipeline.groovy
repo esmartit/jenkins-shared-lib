@@ -19,7 +19,7 @@ def call(body) {
 
         podTemplate(label: label, serviceAccount: 'jenkins',
                 containers: [
-                        containerTemplate(name: 'gradle', image: 'gradle:6.2.2-jdk8', ttyEnabled: true, command: 'cat'),
+                        containerTemplate(name: 'gradle', image: 'gradle:6.4.1-jdk8', ttyEnabled: true, command: 'cat'),
                         containerTemplate(name: 'semantic-release', image: 'esmartit/semantic-release:1.0.3', ttyEnabled: true, command: 'cat',
                                 envVars: [
                                         envVar(key: 'GITHUB_TOKEN', value: gitToken),
