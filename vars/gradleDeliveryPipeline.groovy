@@ -84,7 +84,7 @@ def call(body) {
                                             sh "git add ."
                                             sh "git status"
                                             sh "git commit -m \"adding new artifact version: $version\""
-                                            sh 'git push'
+                                            sh 'git push --set-upstream origin gh-pages'
                                         }
                                     }
                                 }
