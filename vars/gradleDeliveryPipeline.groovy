@@ -82,10 +82,11 @@ def call(body) {
                                     sh "git add ."
                                     sh "git status"
                                     sh "git commit -m \"adding new artifact version: $version\""
-                                    withCredentials([usernamePassword(
-                                            credentialsId: 'esmartit-github-username-pass',
-                                            usernameVariable: 'username', passwordVariable: 'password')]) {
-                                        sh "git push https://$username:$password@$gitUrl"
+                                    withCredentials([sshUserPrivateKey(credentialsId: 'esmartit-github-ssh', keyFileVariable: 'SSH_KEY')]) {
+                                        sh """
+                                            GIT_SSH_COMMAND = "ssh -i $SSH_KEY"
+                                            git push origin gh-pages:gh-pages
+                                           """
                                     }
                                 }
                             }
