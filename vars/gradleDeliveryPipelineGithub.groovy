@@ -85,7 +85,11 @@ def call(body) {
                                     sh "git add ."
                                     sh "git status"
                                     sh "git commit -m \"adding new artifact version: $version\""
-                                    sh "git push"
+                                    withEnv(['GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no']) {
+                                        sshagent(credentials: ['esmartit-github-ssh']) {
+                                            sh "git push"
+                                        }
+                                    }
                                 }
                             }
                         }
