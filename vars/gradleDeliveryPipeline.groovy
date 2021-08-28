@@ -72,21 +72,17 @@ def call(body) {
                                 if (exists) {
                                     def version = readFile('version.txt').toString().replaceAll("[\\n\\t ]", "")
                                     sh "rm version.txt"
-                                    withCredentials([sshUserPrivateKey(credentialsId: 'esmartit-github-ssh', keyFileVariable: 'SSH_KEY')]) {
-                                        withEnv(["GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no -o User=esmartit -i ${SSH_KEY}"]) {
-                                            sh "git fetch --no-tags --force --progress -- https://$gitUrl +refs/heads/gh-pages:refs/remotes/origin/gh-pages"
-                                            sh "git checkout -b gh-pages origin/gh-pages"
-                                            sh "git config --global user.email 'tech@esmartit.es'"
-                                            sh "git config --global user.name 'esmartit'"
-                                            def versionedArtifactName = "$artifactName-${version}.tgz"
-                                            sh "mv ${versionedArtifactName} docs"
-                                            sh "helm repo index docs --merge docs/index.yaml --url $helmRepoUrl"
-                                            sh "git add ."
-                                            sh "git status"
-                                            sh "git commit -m \"adding new artifact version: $version\""
-                                            sh 'git push --set-upstream origin gh-pages'
-                                        }
-                                    }
+                                    sh "git fetch --no-tags --force --progress -- https://$gitUrl +refs/heads/gh-pages:refs/remotes/origin/gh-pages"
+                                    sh "git checkout -b gh-pages origin/gh-pages"
+                                    sh "git config --global user.email 'tech@esmartit.es'"
+                                    sh "git config --global user.name 'esmartit'"
+                                    def versionedArtifactName = "$artifactName-${version}.tgz"
+                                    sh "mv ${versionedArtifactName} docs"
+                                    sh "helm repo index docs --merge docs/index.yaml --url $helmRepoUrl"
+                                    sh "git add ."
+                                    sh "git status"
+                                    sh "git commit -m \"adding new artifact version: $version\""
+                                    sh "git push https://${username}:${gitToken}@$gitUrl gh-pages"
                                 }
                             }
                         }
@@ -104,6 +100,3 @@ def call(body) {
         }
     }
 }
-
-
-
