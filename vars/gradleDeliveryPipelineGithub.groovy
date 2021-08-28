@@ -41,7 +41,7 @@ def call(body) {
                             sh "git config --global user.name 'esmartit'"
 
                             checkout([$class: 'GitSCM',
-                                      branches: [[name: '*/${env.CURRENT_BRANCH}'],
+                                      branches: [[name: '*/${env.BRANCH_NAME}'],
                                                  [name: '*/gh-pages']],
                                       extensions: [],
                                       userRemoteConfigs: [[credentialsId: 'esmartit-github-ssh', url: gitUrl]]])
@@ -51,6 +51,7 @@ def call(body) {
                     container('gradle'){
                         stage('Test') {
                             try {
+                                sh "git checkout ${env.BRANCH_NAME}"
                                 sh 'gradle build'
                             }finally {
                                 junit '**/build/test-results/test/*.xml'
