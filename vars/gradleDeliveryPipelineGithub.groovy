@@ -13,13 +13,11 @@ def call(body) {
         def helmRepoUrl = body.delegate.helmRepoUrl
         def artifactName = body.delegate.artifactName
 
-        def repoUrl = "https://$gitUrl"
-
         def label = "worker-${UUID.randomUUID().toString()}"
 
         podTemplate(label: label, serviceAccount: 'jenkins',
                 containers: [
-                        containerTemplate(name: 'gradle', image: 'gradle:6.2.2-jdk8', ttyEnabled: true, command: 'cat'),
+                        containerTemplate(name: 'gradle', image: 'gradle:6.4.1-jdk8', ttyEnabled: true, command: 'cat'),
                         containerTemplate(name: 'semantic-release', image: 'esmartit/semantic-release:1.0.3', ttyEnabled: true, command: 'cat',
                                 envVars: [
                                         envVar(key: 'GITHUB_TOKEN', value: gitToken),
@@ -38,7 +36,15 @@ def call(body) {
                     notifySlack()
                     container('semantic-release') {
                         stage('Checkout code') {
-                            checkout scm
+
+                            sh "git config --global user.email 'tech@esmartit.es'"
+                            sh "git config --global user.name 'esmartit'"
+
+                            checkout([$class: 'GitSCM',
+                                      branches: [[name: '*/${env.CURRENT_BRANCH}'],
+                                                 [name: '*/gh-pages']],
+                                      extensions: [],
+                                      userRemoteConfigs: [[credentialsId: 'esmartit-github-ssh', url: '${gitUrl}']]])
                         }
                     }
 
@@ -72,21 +78,14 @@ def call(body) {
                                 if (exists) {
                                     def version = readFile('version.txt').toString().replaceAll("[\\n\\t ]", "")
                                     sh "rm version.txt"
-                                    sh "git fetch --no-tags --force --progress -- https://$gitUrl +refs/heads/gh-pages:refs/remotes/origin/gh-pages"
-                                    sh "git checkout -b gh-pages origin/gh-pages"
-                                    sh "git config --global user.email 'tech@esmartit.es'"
-                                    sh "git config --global user.name 'esmartit'"
+                                    sh "git checkout gh-pages"
                                     def versionedArtifactName = "$artifactName-${version}.tgz"
                                     sh "mv ${versionedArtifactName} docs"
                                     sh "helm repo index docs --merge docs/index.yaml --url $helmRepoUrl"
                                     sh "git add ."
                                     sh "git status"
                                     sh "git commit -m \"adding new artifact version: $version\""
-                                    withCredentials([usernamePassword(
-                                            credentialsId: 'esmartit-github-username-pass',
-                                            usernameVariable: 'username', passwordVariable: 'password')]) {
-                                        sh "git push https://$username:$password@$gitUrl"
-                                    }
+                                    sh "git push"
                                 }
                             }
                         }
@@ -104,6 +103,3 @@ def call(body) {
         }
     }
 }
-
-
-
