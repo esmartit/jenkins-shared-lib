@@ -44,7 +44,7 @@ def call(body) {
                                       branches: [[name: '*/${env.CURRENT_BRANCH}'],
                                                  [name: '*/gh-pages']],
                                       extensions: [],
-                                      userRemoteConfigs: [[credentialsId: 'esmartit-github-ssh', url: '${gitUrl}']]])
+                                      userRemoteConfigs: [[credentialsId: 'esmartit-github-ssh', url: gitUrl]]])
                         }
                     }
 
